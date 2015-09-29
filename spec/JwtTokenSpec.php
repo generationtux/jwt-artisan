@@ -82,9 +82,9 @@ class JwtTokenSpec extends ObjectBehavior
 
     public function it_gets_the_payload_from_the_current_token(JwtDriverInterface $jwt)
     {
-        $jwt->decodeToken('token_123', 'secret_123', 'HS256')->willReturn(['foo' => 'bar']);
+        $jwt->decodeToken('token_123', 'secret_123', 'HS256')->willReturn(['foo' => ['baz' => 'bar']]);
 
         $this->setToken('token_123');
-        $this->getPayload()->shouldReturn(['foo' => 'bar']);
+        $this->payload()->shouldReturn(['foo' => ['baz' => 'bar']]);
     }
 }

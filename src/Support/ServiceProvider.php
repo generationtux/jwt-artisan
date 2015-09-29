@@ -4,9 +4,9 @@ namespace GenTux\Support;
 
 use GenTux\Drivers\FirebaseDriver;
 use GenTux\Drivers\JwtDriverInterface;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
-class JwtServiceProvider extends ServiceProvider
+abstract class ServiceProvider extends BaseServiceProvider
 {
 
     /**
@@ -20,4 +20,17 @@ class JwtServiceProvider extends ServiceProvider
             return $app->make(FirebaseDriver::class);
         });
     }
+
+    /**
+     * Boot services for JWT
+     */
+    public function boot()
+    {
+        $this->registerMiddleware();
+    }
+
+    /**
+     * Register middlewares that can be used for routes
+     */
+    abstract protected function registerMiddleware();
 }

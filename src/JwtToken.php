@@ -166,9 +166,9 @@ class JwtToken
      * @param string|null $secret
      * @param string|null $algo
      *
-     * @return array
+     * @return Collection
      */
-    public function getPayload($secret = null, $algo = null)
+    public function payload($secret = null, $algo = null)
     {
         $token = $this->token();
         $secret = $secret ?: $this->secret();
@@ -195,6 +195,8 @@ class JwtToken
     {
         $algo = $algo ?: $this->algorithm();
         $secret = $secret ?: $this->secret();
+        $payload = (array) $payload;
+
         $newToken = $this->jwt->createToken($payload, $secret, $algo);
 
         $token = clone $this;

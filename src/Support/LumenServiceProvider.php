@@ -1,0 +1,17 @@
+<?php
+
+namespace GenTux\Support;
+
+use GenTux\Http\JwtMiddleware;
+
+class LumenServiceProvider extends ServiceProvider
+{
+
+    /**
+     * Register middlewares for JWT that can be used in routes file
+     */
+    protected function registerMiddleware()
+    {
+        $this->app->routeMiddleware(['jwt' => JwtMiddleware::class]);
+    }
+}

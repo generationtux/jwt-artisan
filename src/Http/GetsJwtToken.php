@@ -39,11 +39,13 @@ trait GetsJwtToken
     /**
      * Create a new JWT token object from the token in the request
      *
+     * @param \Illuminate\Http\Request|null $request
+     *
      * @return JwtToken
      */
-    public function jwtToken()
+    public function jwtToken($request = null)
     {
-        $token = $this->input($this->getInputName());
+        $token = $this->getToken($request);
         $driver = $this->makeDriver();
 
         $jwt = new JwtToken($driver);
