@@ -1,13 +1,13 @@
 <?php
 
-namespace spec\GenTux\Http;
+namespace spec\GenTux\Jwt\Http;
 
-use GenTux\JwtToken;
 use Prophecy\Argument;
+use GenTux\Jwt\JwtToken;
 use PhpSpec\ObjectBehavior;
 use Illuminate\Http\Request;
-use GenTux\Exceptions\NoTokenException;
-use GenTux\Exceptions\InvalidTokenException;
+use GenTux\Jwt\Exceptions\NoTokenException;
+use GenTux\Jwt\Exceptions\InvalidTokenException;
 
 class JwtMiddlewareSpec extends ObjectBehavior
 {

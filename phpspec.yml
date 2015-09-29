@@ -1,4 +1,4 @@
 suites:
   main:
-    namespace: GenTux
-    psr4_prefix: GenTux
+    namespace: GenTux\Jwt
+    psr4_prefix: GenTux\Jwt

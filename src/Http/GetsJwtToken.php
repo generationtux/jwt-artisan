@@ -1,9 +1,9 @@
 <?php
 
-namespace GenTux\Http;
+namespace GenTux\Jwt\Http;
 
-use GenTux\JwtToken;
-use GenTux\Drivers\JwtDriverInterface;
+use GenTux\Jwt\JwtToken;
+use GenTux\Jwt\Drivers\JwtDriverInterface;
 
 /**
  * This trait can either be used in middlewares or Illuminate Request objects.

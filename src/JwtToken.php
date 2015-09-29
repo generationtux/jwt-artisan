@@ -1,11 +1,11 @@
 <?php
 
-namespace GenTux;
+namespace GenTux\Jwt;
 
-use GenTux\Drivers\JwtDriverInterface;
-use GenTux\Exceptions\NoTokenException;
-use GenTux\Exceptions\NoSecretException;
-use GenTux\Exceptions\InvalidTokenException;
+use GenTux\Jwt\Drivers\JwtDriverInterface;
+use GenTux\Jwt\Exceptions\NoTokenException;
+use GenTux\Jwt\Exceptions\NoSecretException;
+use GenTux\Jwt\Exceptions\InvalidTokenException;
 
 class JwtToken
 {
@@ -166,7 +166,7 @@ class JwtToken
      * @param string|null $secret
      * @param string|null $algo
      *
-     * @return Collection
+     * @return array
      */
     public function payload($secret = null, $algo = null)
     {

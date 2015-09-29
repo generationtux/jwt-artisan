@@ -1,8 +1,8 @@
 <?php
 
-namespace GenTux\Support;
+namespace GenTux\Jwt\Support;
 
-use GenTux\Http\JwtMiddleware;
+use GenTux\Jwt\Http\JwtMiddleware;
 
 class LaravelServiceProvider extends ServiceProvider
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace GenTux\Drivers;
+namespace GenTux\Jwt\Drivers;
 
 use Firebase\JWT\JWT;
 

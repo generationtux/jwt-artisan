@@ -2,8 +2,8 @@
 
 namespace GenTux\Support;
 
-use GenTux\Drivers\FirebaseDriver;
-use GenTux\Drivers\JwtDriverInterface;
+use GenTux\Jwt\Drivers\FirebaseDriver;
+use GenTux\Jwt\Drivers\JwtDriverInterface;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 abstract class ServiceProvider extends BaseServiceProvider

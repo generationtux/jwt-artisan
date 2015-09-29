@@ -1,13 +1,13 @@
 <?php
 
-namespace spec\GenTux\Drivers;
+namespace spec\GenTux\Jwt\Drivers;
 
 use Exception;
 use Firebase\JWT\JWT;
 use Prophecy\Argument;
 use PhpSpec\ObjectBehavior;
-use GenTux\Drivers\FirebaseDriver;
-use GenTux\Drivers\JwtDriverInterface;
+use GenTux\Jwt\Drivers\FirebaseDriver;
+use GenTux\Jwt\Drivers\JwtDriverInterface;
 
 class FirebaseDriverSpec extends ObjectBehavior
 {

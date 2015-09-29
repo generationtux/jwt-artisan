@@ -1,10 +1,10 @@
 <?php
 
-namespace GenTux\Http;
+namespace GenTux\Jwt\Http;
 
 use Closure;
-use GenTux\JwtToken;
-use GenTux\Exceptions\NoTokenException;
+use GenTux\Jwt\JwtToken;
+use GenTux\Jwt\Exceptions\NoTokenException;
 
 class JwtMiddleware
 {

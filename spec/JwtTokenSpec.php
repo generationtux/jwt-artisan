@@ -1,13 +1,13 @@
 <?php
 
-namespace spec\GenTux;
+namespace spec\GenTux\Jwt;
 
-use GenTux\JwtToken;
 use Prophecy\Argument;
+use GenTux\Jwt\JwtToken;
 use PhpSpec\ObjectBehavior;
-use GenTux\Drivers\JwtDriverInterface;
-use GenTux\Exceptions\NoTokenException;
-use GenTux\Exceptions\InvalidTokenException;
+use GenTux\Jwt\Drivers\JwtDriverInterface;
+use GenTux\Jwt\Exceptions\NoTokenException;
+use GenTux\Jwt\Exceptions\InvalidTokenException;
 
 class JwtTokenSpec extends ObjectBehavior
 {

@@ -2,7 +2,7 @@
 
 namespace GenTux\Support;
 
-use GenTux\Http\JwtMiddleware;
+use GenTux\Jwt\Http\JwtMiddleware;
 
 class LumenServiceProvider extends ServiceProvider
 {

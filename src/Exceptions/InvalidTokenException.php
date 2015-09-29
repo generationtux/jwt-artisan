@@ -1,6 +1,6 @@
 <?php
 
-namespace GenTux\Exceptions;
+namespace GenTux\Jwt\Exceptions;
 
 class InvalidTokenException extends JwtException
 {
