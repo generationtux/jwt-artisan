@@ -1,0 +1,26 @@
+{
+    "name": "generationtux/jwt-laravel",
+    "description": "JWT auth package for Laravel and Lumen",
+    "keywords": ["jwt", "auth", "laravel", "lumen"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kyle Ferguson",
+            "email": "kylegferg@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "firebase/php-jwt": "^3.0",
+        "illuminate/http": "^5.1",
+        "illuminate/support": "^5.1"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "GenTux\\": "src/"
+        }
+    }
+}

@@ -1,0 +1,4 @@
+suites:
+  main:
+    namespace: GenTux
+    psr4_prefix: GenTux
