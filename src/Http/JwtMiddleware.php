@@ -12,14 +12,14 @@ class JwtMiddleware
     use GetsJwtToken;
 
     /** @var JwtToken */
-    private $token;
+    private $jwt;
 
     /**
-     * @param JwtToken $token
+     * @param JwtToken $jwt
      */
-    public function __construct(JwtToken $token)
+    public function __construct(JwtToken $jwt)
     {
-        $this->token = $token;
+        $this->jwt = $jwt;
     }
 
     /**
@@ -31,7 +31,7 @@ class JwtMiddleware
     public function handle($request, Closure $next)
     {
         $token = $this->getTokenFromRequest($request);
-        $this->token->validateOrFail($token);
+        $this->jwt->setToken($token)->validateOrFail();
 
         return $next($request);
     }

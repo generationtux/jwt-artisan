@@ -16,15 +16,24 @@ trait GetsJwtToken
     /**
      * Get the JWT token from the request
      *
+     * We'll check the Authorization header first, and if thats not set
+     * then check the input sent to see if its provided there instead.
+     *
      * @param \Illuminate\Http\Request|null $request
      *
      * @return string|null
      */
     public function getToken($request = null)
     {
-        $name = $this->getInputName();
+        $request = $request ?: $this;
 
-        return $request ? $request->input($name) : $this->input($name);
+        list($token) = sscanf($request->header('Authorization'), 'Bearer %s');
+        if( ! $token) {
+            $name = $this->getInputName();
+            $token = $request->input($name);
+        }
+
+        return $token;
     }
 
     /**
