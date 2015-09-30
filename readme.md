@@ -9,15 +9,15 @@ makes working with JWT super easy for both [Laravel](http://laravel.com/) and [L
 
 Because you have
 
-![microservices](http://imgur.com/GJlYD83)
+![microservices](http://i.imgur.com/GJlYD83.jpg)
 
 That need to authenticate with each other so you can turn away bad requests like
 
-![how bout no](http://imgur.com/BMPy7AG)
+![how bout no](http://i.imgur.com/BMPy7AG.png)
 
 Which is why JWT makes you feel like
 
-![yea baby](http://imgur.com/lySEl7O)
+![yea baby](http://i.imgur.com/lySEl7O.jpg)
 
 ### Contents
 
