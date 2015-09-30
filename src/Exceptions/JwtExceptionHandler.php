@@ -21,7 +21,7 @@ trait JwtExceptionHandler
         } elseif ($e instanceof NoSecretException) {
             return $this->handleJwtNoSecret($e);
         } else {
-            $message = getenv('JWT_MESSAGE_ERROR') ?: 'Something went wrong while validating the token.';
+            $message = getenv('JWT_MESSAGE_ERROR') ?: 'There was an error while validating the authorization token.';
             return response()->json([
                 'error' => $message
             ], 500);
@@ -35,7 +35,7 @@ trait JwtExceptionHandler
      */
     protected function handleJwtInvalidToken(InvalidTokenException $e)
     {
-        $message = getenv('JWT_MESSAGE_INVALID') ?: 'Token is not valid.';
+        $message = getenv('JWT_MESSAGE_INVALID') ?: 'Authorization token is not valid.';
 
         return response()->json(['error' => $message], 401);
     }
@@ -47,9 +47,9 @@ trait JwtExceptionHandler
      */
     protected function handleJwtNoToken(NoTokenException $e)
     {
-        $message = getenv('JWT_MESSAGE_NOTOKEN') ?: 'Token is required.';
+        $message = getenv('JWT_MESSAGE_NOTOKEN') ?: 'Authorization token is required.';
 
-        return response()->json(['error' => $message], 422);
+        return response()->json(['error' => $message], 401);
     }
 
     /**
