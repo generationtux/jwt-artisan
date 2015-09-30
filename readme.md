@@ -19,16 +19,18 @@ Install the package using composer
 
 Add the appropriate service provider for Laravel/Lumen
 
-    // Laravel
-    // config/app.php
-    'providers' => [
-        ...
-        GenTux\Jwt\Support\LaravelServiceProvider::class,
-    ]
+```php
+// Laravel
+// config/app.php
+'providers' => [
+    ...
+    GenTux\Jwt\Support\LaravelServiceProvider::class,
+]
 
-    // Lumen
-    // bootstrap/app.php
-    $app->register(GenTux\Jwt\Support\LumenServiceProvider::class);
+// Lumen
+// bootstrap/app.php
+$app->register(GenTux\Jwt\Support\LumenServiceProvider::class);
+```
 
 
 ## Configure
@@ -59,88 +61,99 @@ If you're using the `JwtExceptionHandler` to handle exceptions, these environmen
 - [Creating Tokens](#creating-tokens)
 - [Validating Tokens](#validating-tokens)
 - [Payloads](#payloads)
+- [Handling Errors](#handling-errors)
 
 ### Creating Tokens
 
 Inject an instance of `GenTux\Jwt\JwtToken` into your controller or other service to create new tokens.
 
-    <?php
+```php
+<?php
 
-    use GenTux\Jwt\JwtToken;
+use GenTux\Jwt\JwtToken;
 
-    class TokensController extends controller
+class TokensController extends controller
+{
+    public function create(JwtToken $jwt)
     {
-        public function create(JwtToken $jwt)
-        {
-            $payload = ['exp' => time() + 7200]; // expire in 2 hours
-            $token = $jwt->createToken($payload); // new instance of JwtToken
+        $payload = ['exp' => time() + 7200]; // expire in 2 hours
+        $token = $jwt->createToken($payload); // new instance of JwtToken
 
-            return (string) $token;
-        }
+        return (string) $token;
     }
+}
+```
 
 Implement `GenTux\Jwt\JwtPayloadInterface` to pass other objects to `createToken` for a more dynamic payload.
 
-    <?php
+```php
+<?php
 
-    use GenTux\Jwt\JwtPayloadInterface;
+use GenTux\Jwt\JwtPayloadInterface;
 
-    class User extends Model implements JwtPlayloadInterface
+class User extends Model implements JwtPlayloadInterface
+{
+    public function getPayload()
     {
-        public function getPayload()
-        {
-            return [
-                'sub' => $this->id,
-                'exp' => time() + 7200,
-                'context' => [
-                    'email' => $this->email
-                ]
-            ];
-        }
+        return [
+            'sub' => $this->id,
+            'exp' => time() + 7200,
+            'context' => [
+                'email' => $this->email
+            ]
+        ];
     }
+}
+```
 
 Then simply pass that object when creating the token
 
-    <?php
+```php
+<?php
 
-    use GenTux\Jwt\JwtToken;
+use GenTux\Jwt\JwtToken;
 
-    class TokensController extends controller
+class TokensController extends controller
+{
+    public function create(JwtToken $jwt)
     {
-        public function create(JwtToken $jwt)
-        {
-            $user = User::find(1);
-            $token = $jwt->createToken($user);
+        $user = User::find(1);
+        $token = $jwt->createToken($user);
 
-            return $token->payload(); // ['sub' => 1, exp => '...', 'context' => ...]
-        }
+        return $token->payload(); // ['sub' => 1, exp => '...', 'context' => ...]
     }
+}
+```
 
 You can set a specific `secret` and `algorithm` to use if necessary
 
-    public function create(JwtToken $jwt)
-    {
-        return $jwt
-                ->setSecret('secret_123')
-                ->setAlgorithm('custom')
-                ->createToken('[...]');
-    }
+```php
+public function create(JwtToken $jwt)
+{
+    return $jwt
+            ->setSecret('secret_123')
+            ->setAlgorithm('custom')
+            ->createToken('[...]');
+}
+```
 
 ### Validating Tokens
 
 The easiest way to validate a request with a JWT token is to use the provided middleware.
 
-    <?php
+```php
+<?php
 
-    // Laravel
-    Route::group(['middleware' => 'jwt'], function() {
-        Route::post('/foo', 'FooController');
-    });
+// Laravel
+Route::group(['middleware' => 'jwt'], function() {
+    Route::post('/foo', 'FooController');
+});
 
-    // Lumen
-    $app->group(['middleware' => 'jwt', 'namespace' => 'App\Http\Controllers'], function($app)  {
-        $app->post('/foo', 'FooController');
-    });
+// Lumen
+$app->group(['middleware' => 'jwt', 'namespace' => 'App\Http\Controllers'], function($app)  {
+    $app->post('/foo', 'FooController');
+});
+```
 
 When a token is invalid, `GenTux\Jwt\Exceptions\InvalidTokenException` will be thrown. If no token is provided,
 then `GenTux\Jwt\Exceptions\NoTokenException` will be thrown.
@@ -149,79 +162,113 @@ To manually validate the token, you can get tokens in any class using the trait 
 
 For example, in a **Laravel** request object
 
-    <?php
+```php
+<?php
 
-    use GenTux\Jwt\GetsJwtToken;
+use GenTux\Jwt\GetsJwtToken;
 
-    class CreateUser extends FormRequest
+class CreateUser extends FormRequest
+{
+    use GetsJwtToken;
+
+    public function authorize()
     {
-        use GetsJwtToken;
-
-        public function authorize()
-        {
-            return $this->jwtToken()->validate();
-        }
+        return $this->jwtToken()->validate();
     }
+}
+```
 
 Or in a controller for **Lumen**
 
-    <?php
+```php
+<?php
 
-    use GenTux\Jwt\GetsJwtController;
+use GenTux\Jwt\GetsJwtController;
 
-    class FooController extends controller
+class FooController extends controller
+{
+    use GetsJwtToken;
+
+    public function store()
     {
-        use GetsJwtToken;
-
-        public function store()
-        {
-            if( ! $this->jwtToken()->validate()) {
-                return redirect('/nope');
-            }
-
-            ...
+        if( ! $this->jwtToken()->validate()) {
+            return redirect('/nope');
         }
-    }
 
+        ...
+    }
+}
+```
 
 ### Payloads
 
 Once you have the token, working with the payload is easy.
 
-    <?php
+```php
+<?php
 
-    use GenTux\Jwt\GetsJwtToken;
+use GenTux\Jwt\GetsJwtToken;
 
-    class TokenService
+class TokenService
+{
+
+    use GetsJwtToken;
+
+    public function getExpires()
     {
+        $payload = $this->jwtPayload(); // shortcut for $this->jwtToken()->payload()
 
-        use GetsJwtToken;
-
-        public function getExpires()
-        {
-            $payload = $this->jwtPayload(); // shortcut for $this->jwtToken()->payload()
-
-            return $payload['exp'];
-        }
+        return $payload['exp'];
     }
+}
+```
 
 The `payload` method for JwtToken accepts a `path` that can be used to get specific data from the payload.
 
-    <?php
+```php
+<?php
 
-    use GenTux\Jwt\GetsJwtToken;
+use GenTux\Jwt\GetsJwtToken;
 
-    class TokenService
+class TokenService
+{
+    use GetsJwtToken;
+
+    public function getData()
     {
-        use GetsJwtToken;
+        // ['exp' => '123', 'context' => ['foo' => 'bar']]
 
-        public function getData()
-        {
-            // ['exp' => '123', 'context' => ['foo' => 'bar']]
-
-            $token = $this->jwtToken();
-            $token->payload('exp'); // 123
-            $token->payload('context.foo'); // bar
-            $token->payload('context.baz'); // null
-        }
+        $token = $this->jwtToken();
+        $token->payload('exp'); // 123
+        $token->payload('context.foo'); // bar
+        $token->payload('context.baz'); // null
     }
+}
+```
+
+### Handling Errors
+
+This package can handle JWT exceptions out of the box if you would like. It will take all JWT exceptions
+and return JSON error responses. If you would like to implements your own error handling, you can look
+at `GenTux\Jwt\Exceptions\JwtExceptionHandler` for an example.
+
+To implement, add the following inside of `app/Exceptions/Handler.php`
+
+```php
+<?php
+
+use GenTux\Jwt\Exceptions\JwtException;
+use GenTux\Jwt\Exceptions\JwtExceptionHandler;
+
+class Handler extends ExceptionHandler
+{
+    use JwtExceptionHandler;
+
+    public function render($request, Exception $e)
+    {
+        if($e instanceof JwtException) return $this->handleJwtException($e);
+
+        ...
+    }
+}
+```
