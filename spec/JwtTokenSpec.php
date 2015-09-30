@@ -2,6 +2,7 @@
 
 namespace spec\GenTux\Jwt;
 
+use GenTux\Jwt\JwtPayloadInterface;
 use Prophecy\Argument;
 use GenTux\Jwt\JwtToken;
 use PhpSpec\ObjectBehavior;
@@ -80,11 +81,29 @@ class JwtTokenSpec extends ObjectBehavior
         if($result->token() !== 'newtoken_123') throw new \Exception('New token was not set correctly.');
     }
 
+    public function it_creates_new_tokens_from_a_jwt_payload_interface_object(JwtPayloadInterface $payload, JwtDriverInterface $jwt)
+    {
+        $jwt->createToken(['foo' => 'bar'], 'secret_123', 'HS256')->willReturn('newtoken_123');
+        $payload->getPayload()->willReturn(['foo' => 'bar']);
+
+        $result = $this->createToken($payload)->shouldHaveType(JwtToken::class);
+        if($result->token() !== 'newtoken_123') throw new \Exception('New token was not set correctly.');
+    }
+
     public function it_gets_the_payload_from_the_current_token(JwtDriverInterface $jwt)
     {
         $jwt->decodeToken('token_123', 'secret_123', 'HS256')->willReturn(['foo' => ['baz' => 'bar']]);
 
         $this->setToken('token_123');
         $this->payload()->shouldReturn(['foo' => ['baz' => 'bar']]);
+    }
+
+    public function it_gets_the_payload_data_from_the_provided_dot_path(JwtDriverInterface $jwt)
+    {
+        $jwt->decodeToken('token_123', 'secret_123', 'HS256')->willReturn(['foo' => 'bar', 'context' => ['some' => 'data']]);
+
+        $this->setToken('token_123');
+        $this->payload('foo')->shouldReturn('bar');
+        $this->payload('context.some')->shouldReturn('data');
     }
 }

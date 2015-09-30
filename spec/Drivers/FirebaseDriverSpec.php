@@ -51,7 +51,7 @@ class FirebaseDriverSpec extends ObjectBehavior
             'exp' => time() + 30,
             'iat' => time(),
             'nbf' => time(),
-            'foo' => 'bar',
+            'context' => ['foo' => 'bar'],
         ], $secret = 'secret_123');
 
         $driver = new FirebaseDriver();
@@ -61,7 +61,7 @@ class FirebaseDriverSpec extends ObjectBehavior
             $result['exp'] !== $payload['exp']
             || $result['iat'] !== $payload['iat']
             || $result['nbf'] !== $payload['nbf']
-            || $result['foo'] !== $payload['foo']
+            || $result['context']['foo'] !== $payload['context']['foo']
         ) {
             throw new \Exception('Decoded payload did not match the encoded tokens payload. '.$token);
         }

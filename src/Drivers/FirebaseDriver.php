@@ -52,6 +52,29 @@ class FirebaseDriver implements JwtDriverInterface
      */
     public function decodeToken($token, $secret, $algorithm = 'HS256')
     {
-        return (array) JWT::decode($token, $secret, [$algorithm]);
+        $decoded = JWT::decode($token, $secret, [$algorithm]);
+
+        return $this->convertObjectToArray($decoded);
+    }
+
+    /**
+     * Recursively convert the provided object to an array
+     *
+     * @param mixed $data
+     *
+     * @return array
+     */
+    private function convertObjectToArray($data)
+    {
+        $converted = [];
+        foreach($data as $key => $value) {
+            if(is_object($value)) {
+                $converted[$key] = $this->convertObjectToArray($value);
+            } else {
+                $converted[$key] = $value;
+            }
+        }
+
+        return $converted;
     }
 }

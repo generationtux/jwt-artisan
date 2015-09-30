@@ -2,6 +2,7 @@
 
 namespace GenTux\Jwt;
 
+use Illuminate\Support\Arr;
 use GenTux\Jwt\Drivers\JwtDriverInterface;
 use GenTux\Jwt\Exceptions\NoTokenException;
 use GenTux\Jwt\Exceptions\NoSecretException;
@@ -163,18 +164,41 @@ class JwtToken
     /**
      * Get the payload from the current token
      *
+     * @param string|null $path    dot syntax to query for specific data
      * @param string|null $secret
      * @param string|null $algo
      *
      * @return array
      */
-    public function payload($secret = null, $algo = null)
+    public function payload($path = null, $secret = null, $algo = null)
     {
         $token = $this->token();
         $secret = $secret ?: $this->secret();
         $algo = $algo ?: $this->algorithm();
 
-        return $this->jwt->decodeToken($token, $secret, $algo);
+        $payload = $this->jwt->decodeToken($token, $secret, $algo);
+
+        return $this->queryPayload($payload, $path);
+    }
+
+    /**
+     * Query the payload using dot syntax to find specific data
+     *
+     * @param array       $payload
+     * @param string|null $path
+     *
+     * @return mixed
+     */
+    private function queryPayload($payload, $path = null)
+    {
+        if(is_null($path)) return $payload;
+
+        $dotData = Arr::dot($payload);
+        if(array_key_exists($path, $dotData)) {
+            return $dotData[$path];
+        }
+
+        return null;
     }
 
     /**
@@ -185,9 +209,9 @@ class JwtToken
      *
      * @todo Support for enforcing required claims in payload
      *
-     * @param array|object $payload
-     * @param string|null  $secret
-     * @param string|null  $algo
+     * @param JwtPayloadInterface|array $payload
+     * @param string|null               $secret
+     * @param string|null               $algo
      *
      * @return JwtToken
      */
@@ -195,7 +219,10 @@ class JwtToken
     {
         $algo = $algo ?: $this->algorithm();
         $secret = $secret ?: $this->secret();
-        $payload = (array) $payload;
+
+        if($payload instanceof JwtPayloadInterface) {
+            $payload = $payload->getPayload();
+        }
 
         $newToken = $this->jwt->createToken($payload, $secret, $algo);
 
