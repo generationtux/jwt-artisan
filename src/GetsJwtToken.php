@@ -102,6 +102,8 @@ trait GetsJwtToken
      */
     private function makeRequest()
     {
+        if($this instanceof Request) return $this;
+
         return app(Request::class);
     }
 }
