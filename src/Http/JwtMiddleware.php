@@ -4,6 +4,7 @@ namespace GenTux\Jwt\Http;
 
 use Closure;
 use GenTux\Jwt\JwtToken;
+use GenTux\Jwt\GetsJwtToken;
 use GenTux\Jwt\Exceptions\NoTokenException;
 
 class JwtMiddleware

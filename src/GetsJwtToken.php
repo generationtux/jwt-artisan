@@ -1,14 +1,14 @@
 <?php
 
-namespace GenTux\Jwt\Http;
+namespace GenTux\Jwt;
 
-use GenTux\Jwt\JwtToken;
+use Illuminate\Http\Request;
 use GenTux\Jwt\Drivers\JwtDriverInterface;
+use GenTux\Jwt\Exceptions\NoTokenException;
 
 /**
- * This trait can either be used in middlewares or Illuminate Request objects.
- * It will provide methods for retrieving the token from the request
- * that it's either used in, or provided.
+ * This trait can be used to retrieve JWT tokens
+ * from the current request.
  */
 trait GetsJwtToken
 {
@@ -16,16 +16,16 @@ trait GetsJwtToken
     /**
      * Get the JWT token from the request
      *
-     * We'll check the Authorization header first, and if thats not set
-     * then check the input sent to see if its provided there instead.
+     * We'll check the Authorization header first, and if that's not set
+     * then check the input to see if its provided there instead.
      *
-     * @param \Illuminate\Http\Request|null $request
+     * @param Request|null $request
      *
      * @return string|null
      */
     public function getToken($request = null)
     {
-        $request = $request ?: $this;
+        $request = $request ?: $this->makeRequest();
 
         list($token) = sscanf($request->header('Authorization'), 'Bearer %s');
         if( ! $token) {
@@ -39,19 +39,36 @@ trait GetsJwtToken
     /**
      * Create a new JWT token object from the token in the request
      *
-     * @param \Illuminate\Http\Request|null $request
+     * @param Request|null $request
      *
      * @return JwtToken
+     *
+     * @throws NoTokenException
      */
     public function jwtToken($request = null)
     {
         $token = $this->getToken($request);
-        $driver = $this->makeDriver();
+        if( ! $token) throw new NoTokenException('JWT token is required.');
 
+        $driver = $this->makeDriver();
         $jwt = new JwtToken($driver);
         $jwt->setToken($token);
 
         return $jwt;
+    }
+
+    /**
+     * Get payload from JWT token
+     *
+     * @param Request|null $request
+     *
+     * @return array
+     */
+    public function jwtPayload($request = null)
+    {
+        $jwt = $this->jwtToken($request);
+
+        return $jwt->payload();
     }
 
     /**
@@ -75,5 +92,15 @@ trait GetsJwtToken
     private function makeDriver()
     {
         return app(JwtDriverInterface::class);
+    }
+
+    /**
+     * Resolve the current request from the IoC
+     *
+     * @return \Illuminate\Http\Request
+     */
+    private function makeRequest()
+    {
+        return app(Request::class);
     }
 }
