@@ -5,6 +5,20 @@
 [JWT](http://jwt.io/) is a great solution for authenticating API requests between various services. This package
 makes working with JWT super easy for both [Laravel](http://laravel.com/) and [Lumen](http://lumen.laravel.com/).
 
+### Why JWT?
+
+Because you have
+
+![microservices](http://imgur.com/GJlYD83)
+
+That need to authenticate with each other so you can turn away bad requests like
+
+![how bout no](http://imgur.com/BMPy7AG)
+
+Which is why JWT makes you feel like
+
+![yea baby](http://imgur.com/lySEl7O)
+
 ### Contents
 
 - [Setup](#setup)
