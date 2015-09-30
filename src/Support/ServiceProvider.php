@@ -1,6 +1,6 @@
 <?php
 
-namespace GenTux\Support;
+namespace GenTux\Jwt\Support;
 
 use GenTux\Jwt\Drivers\FirebaseDriver;
 use GenTux\Jwt\Drivers\JwtDriverInterface;

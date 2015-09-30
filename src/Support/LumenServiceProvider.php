@@ -1,6 +1,6 @@
 <?php
 
-namespace GenTux\Support;
+namespace GenTux\Jwt\Support;
 
 use GenTux\Jwt\Http\JwtMiddleware;
 
