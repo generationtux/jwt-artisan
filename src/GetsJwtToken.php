@@ -60,15 +60,16 @@ trait GetsJwtToken
     /**
      * Get payload from JWT token
      *
+     * @param string|null  $path    to query payload
      * @param Request|null $request
      *
      * @return array
      */
-    public function jwtPayload($request = null)
+    public function jwtPayload($path = null, $request = null)
     {
         $jwt = $this->jwtToken($request);
 
-        return $jwt->payload();
+        return $jwt->payload($path);
     }
 
     /**

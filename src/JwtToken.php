@@ -207,7 +207,7 @@ class JwtToken
      * The default algorithm used is HS256. To set a custom one, set
      * the env variable JWT_ALGO.
      *
-     * @todo Support for enforcing required claims in payload
+     * @todo Support for enforcing required claims in payload as well as defaults
      *
      * @param JwtPayloadInterface|array $payload
      * @param string|null               $secret
