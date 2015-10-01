@@ -193,6 +193,10 @@ class JwtToken
     {
         if(is_null($path)) return $payload;
 
+        if(array_key_exists($path, $payload)) {
+            return $payload[$path];
+        }
+
         $dotData = Arr::dot($payload);
         if(array_key_exists($path, $dotData)) {
             return $dotData[$path];

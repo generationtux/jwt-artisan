@@ -104,6 +104,7 @@ class JwtTokenSpec extends ObjectBehavior
 
         $this->setToken('token_123');
         $this->payload('foo')->shouldReturn('bar');
+        $this->payload('context')->shouldReturn(['some' => 'data']);
         $this->payload('context.some')->shouldReturn('data');
     }
 }
