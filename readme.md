@@ -105,7 +105,7 @@ Implement `GenTux\Jwt\JwtPayloadInterface` to pass other objects to `createToken
 
 use GenTux\Jwt\JwtPayloadInterface;
 
-class User extends Model implements JwtPlayloadInterface
+class User extends Model implements JwtPayloadInterface
 {
     public function getPayload()
     {
