@@ -8,6 +8,15 @@ class FirebaseDriver implements JwtDriverInterface
 {
 
     /**
+     * @param int $leeway for checking timestamps
+     */
+    public function __construct($leeway = null)
+    {
+        $leeway = $leeway ?: getenv('JWT_LEEWAY');
+        JWT::$leeway = $leeway ?: 0;
+    }
+
+    /**
      * Validate that the provided token
      *
      * @param string $token
