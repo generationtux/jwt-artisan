@@ -2,13 +2,14 @@
 
 namespace GenTux\Jwt;
 
+use JsonSerializable;
 use Illuminate\Support\Arr;
 use GenTux\Jwt\Drivers\JwtDriverInterface;
 use GenTux\Jwt\Exceptions\NoTokenException;
 use GenTux\Jwt\Exceptions\NoSecretException;
 use GenTux\Jwt\Exceptions\InvalidTokenException;
 
-class JwtToken
+class JwtToken implements JsonSerializable
 {
 
     /** @var JwtDriverInterface */
@@ -235,6 +236,20 @@ class JwtToken
 
         return $token;
     }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     *
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return $this->token();
+    }
+
 
     /**
      * Convert into string

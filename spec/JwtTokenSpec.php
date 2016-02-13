@@ -2,12 +2,14 @@
 
 namespace spec\GenTux\Jwt;
 
-use GenTux\Jwt\JwtPayloadInterface;
 use Prophecy\Argument;
 use GenTux\Jwt\JwtToken;
 use PhpSpec\ObjectBehavior;
+use GenTux\Jwt\JwtPayloadInterface;
+use GenTux\Jwt\Drivers\FirebaseDriver;
 use GenTux\Jwt\Drivers\JwtDriverInterface;
 use GenTux\Jwt\Exceptions\NoTokenException;
+use PhpSpec\Exception\Example\FailureException;
 use GenTux\Jwt\Exceptions\InvalidTokenException;
 
 class JwtTokenSpec extends ObjectBehavior
@@ -106,5 +108,19 @@ class JwtTokenSpec extends ObjectBehavior
         $this->payload('foo')->shouldReturn('bar');
         $this->payload('context')->shouldReturn(['some' => 'data']);
         $this->payload('context.some')->shouldReturn('data');
+    }
+
+    public function it_encodes_to_json_as_a_string_representation_of_the_token(JwtDriverInterface $jwt)
+    {
+        $driver = new FirebaseDriver();
+        $jwt = new JwtToken($driver);
+        $token = $jwt->createToken(['exp' => time() + 100], 'secret');
+
+        $serialized = json_encode(['token' => $token]);
+        $decoded = json_decode($serialized);
+
+        if( ! is_string($decoded->token) || strlen($decoded->token) < 1) {
+            throw new FailureException('Token was not json encoded.');
+        }
     }
 }
