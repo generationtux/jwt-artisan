@@ -27,7 +27,7 @@ trait GetsJwtToken
     {
         $request = $request ?: $this->makeRequest();
 
-        list($token) = sscanf($request->header('Authorization'), 'Bearer %s');
+        list($token) = sscanf($request->header($this->getInputName()), 'Bearer %s');
         if( ! $token) {
             $name = $this->getInputName();
             $token = $request->input($name);
@@ -82,7 +82,7 @@ trait GetsJwtToken
      */
     private function getInputName()
     {
-        return getenv('JWT_INPUT') ?: 'token';
+        return getenv('JWT_INPUT') ?: 'Authorization';
     }
 
     /**
