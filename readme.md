@@ -59,6 +59,7 @@ for the available config options and their defaults.
 | `JWT_ALGO`   | *HS256* | The algorithm to use for sigining tokens.                        |
 | `JWT_LEEWAY` | *0*     | Seconds of leeway for validating timestamps to account for time differences between systems |
 | `JWT_INPUT`  | *token* | By default we will look for the token in the `Authorization` header. If it's not found there, then this value will be used to search the sent input from the request to find the token. |
+| `JWT_HEADER`  | *Authorization* | By default the `Authorization` header key is used. This can be overridden with this value. |
 
 If you're using the `JwtExceptionHandler` to handle exceptions, these environment variables can be set to customize the error messages.
 *(see below for information on using the exception handler)*
