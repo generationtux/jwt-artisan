@@ -35,7 +35,6 @@ class Application extends LumenApplication {
     protected function bindPathsInContainer() {
 
         $this->instance('path', $this->path());
-
         foreach (['base', 'database', 'storage', 'config'] as $path) {
             $this->instance('path.'.$path, $this->{$path.'Path'}());
         }
