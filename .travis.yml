@@ -5,4 +5,4 @@ php:
   - '7.0'
   - hhvm
 install: composer install
-script: phpspec run
+script: ./vendor/bin/phpspec run
