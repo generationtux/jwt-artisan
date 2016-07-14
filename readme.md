@@ -1,5 +1,7 @@
 # JWT Artisan
 
+[![Build Status](https://travis-ci.org/generationtux/jwt-artisan.svg?branch=master)](https://travis-ci.org/generationtux/jwt-artisan)
+
 ## Token auth for Laravel and Lumen web artisans
 
 [JWT](http://jwt.io/) is a great solution for authenticating API requests between various services. This package
