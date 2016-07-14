@@ -4,4 +4,4 @@ php:
   - '5.6'
   - '7.0'
   - hhvm
-script: ./vendor/bin/phpspec run
+script: phpspec run
