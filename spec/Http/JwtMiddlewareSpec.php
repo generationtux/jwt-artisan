@@ -28,6 +28,22 @@ class JwtMiddlewareSpec extends ObjectBehavior
         $this->handle($request, $next)->shouldReturn('hello world');
     }
 
+    public function it_validates_the_token_with_custom_header_key_and_passes_onto_the_next_middleware(JwtToken $token, Request $request)
+    {
+        $customHeader = 'X-Test-AuthHeader';
+        putenv("JWT_HEADER=$customHeader");
+
+        $request->header($customHeader)->willReturn('Bearer foo_token');
+
+        $token->setToken('foo_token')->willReturn($token);
+        $token->validateOrFail()->shouldBeCalled()->willReturn(true);
+
+        $next = function() { return 'hello world'; };
+        $this->handle($request, $next)->shouldReturn('hello world');
+
+        putenv('JWT_HEADER=');
+    }
+
     public function it_throws_an_exception_if_the_token_is_invalid(JwtToken $token, Request $request)
     {
         $request->header('Authorization')->willReturn(null);

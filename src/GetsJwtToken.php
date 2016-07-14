@@ -27,7 +27,7 @@ trait GetsJwtToken
     {
         $request = $request ?: $this->makeRequest();
 
-        list($token) = sscanf($request->header('Authorization'), 'Bearer %s');
+        list($token) = sscanf($request->header($this->getAuthHeaderKey()), 'Bearer %s');
         if( ! $token) {
             $name = $this->getInputName();
             $token = $request->input($name);
@@ -83,6 +83,19 @@ trait GetsJwtToken
     private function getInputName()
     {
         return getenv('JWT_INPUT') ?: 'token';
+    }
+
+    /**
+     * Get the header key to search for the token
+     *
+     * This can be customized by setting the JWT_HEADER env variable.
+     * It will default to using `Authorization` if not defined.
+     *
+     * @return string
+     */
+    private function getAuthHeaderKey()
+    {
+        return getenv('JWT_HEADER') ?: 'Authorization';
     }
 
     /**
