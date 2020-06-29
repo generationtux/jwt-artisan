@@ -7,16 +7,24 @@
         {
             "name": "Kyle Ferguson",
             "email": "kylegferg@gmail.com"
+        },
+        {
+          "name": "Damien Russell",
+          "email": "christopher.russell@generationtux.com"
+        },
+        {
+          "name": "Thomas Manley",
+          "email": "thomas.manley@generationtux.com"
         }
     ],
     "minimum-stability": "stable",
     "require": {
-        "firebase/php-jwt": "^3.0",
-        "illuminate/http": "^5.1",
-        "illuminate/support": "^5.1"
+        "firebase/php-jwt": "5.2.0",
+        "illuminate/http": "^6.0",
+        "illuminate/support": "^6.0"
     },
     "require-dev": {
-        "phpspec/phpspec": "^2.3"
+        "phpspec/phpspec": "6.2.0"
     },
     "autoload": {
         "psr-4": {
