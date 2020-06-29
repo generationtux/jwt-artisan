@@ -79,17 +79,18 @@ class JwtTokenSpec extends ObjectBehavior
     {
         $jwt->createToken(['exp' => '123'], 'secret_123', 'HS256')->willReturn('newtoken_123');
 
-        $result = $this->createToken(['exp' => '123'])->shouldHaveType(JwtToken::class);
-        if($result->token() !== 'newtoken_123') throw new \Exception('New token was not set correctly.');
+        $result = $this->createToken(['exp' => '123']);
+        $result->shouldHaveType(JwtToken::class);
+        if($result->getWrappedObject()->token() !== 'newtoken_123') throw new \Exception('New token was not set correctly.');
     }
 
     public function it_creates_new_tokens_from_a_jwt_payload_interface_object(JwtPayloadInterface $payload, JwtDriverInterface $jwt)
     {
         $jwt->createToken(['foo' => 'bar'], 'secret_123', 'HS256')->willReturn('newtoken_123');
         $payload->getPayload()->willReturn(['foo' => 'bar']);
-
-        $result = $this->createToken($payload)->shouldHaveType(JwtToken::class);
-        if($result->token() !== 'newtoken_123') throw new \Exception('New token was not set correctly.');
+        $result = $this->createToken($payload);
+        $result->shouldHaveType(JwtToken::class);
+        if($result->getWrappedObject()->token() !== 'newtoken_123') throw new \Exception('New token was not set correctly.');
     }
 
     public function it_gets_the_payload_from_the_current_token(JwtDriverInterface $jwt)

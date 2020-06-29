@@ -105,7 +105,7 @@ trait GetsJwtToken
      */
     private function makeDriver()
     {
-        return app(JwtDriverInterface::class);
+        return app()->make(JwtDriverInterface::class);
     }
 
     /**
@@ -117,6 +117,6 @@ trait GetsJwtToken
     {
         if($this instanceof Request) return $this;
 
-        return app(Request::class);
+        return app()->make(Request::class);
     }
 }
