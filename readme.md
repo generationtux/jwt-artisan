@@ -1,6 +1,6 @@
 # JWT Artisan
 
-![Build Test Status](https://github.com/generationtux/jwt-artisan/actions/workflows/test.yml/badge.svg)
+![Build Test Status](https://github.com/generationtux/jwt-artisan/actions/workflows/test.yml/badge.svg?event=push)
 
 ## Token auth for Laravel and Lumen web artisans
 
