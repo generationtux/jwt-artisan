@@ -23,6 +23,11 @@ jobs:
       with:
         php-version: ${{ matrix.php }}
 
+    - name: Install Dependencies
+      uses: php-actions/composer@master
+      with:
+        php_version: ${{ matrix.php }}
+
     - name: PHP spec
       uses: php-actions/phpspec@master
       with:
