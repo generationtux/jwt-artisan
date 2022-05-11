@@ -1,0 +1,34 @@
+name: test
+
+on: [push]
+
+jobs:
+  build:
+    name: PHP ${{ matrix.php }}
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ 7.3 ]
+        os: [ ubuntu-latest ]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@master
+      with:
+        php-version: ${{ matrix.php }}
+
+    - name: Install Dependencies
+      uses: php-actions/composer@master
+      with:
+        php_version: ${{ matrix.php }}
+
+    - name: PHP spec
+      uses: php-actions/phpspec@master
+      with:
+        config: phpspec.yml

@@ -2,6 +2,7 @@
 
 namespace spec\GenTux\Jwt;
 
+use Exception;
 use Prophecy\Argument;
 use GenTux\Jwt\JwtToken;
 use PhpSpec\ObjectBehavior;

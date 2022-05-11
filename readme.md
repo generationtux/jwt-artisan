@@ -1,6 +1,6 @@
 # JWT Artisan
 
-[![Build Status](https://travis-ci.org/generationtux/jwt-artisan.svg?branch=master)](https://travis-ci.org/generationtux/jwt-artisan)
+![Build Test Status](https://github.com/generationtux/jwt-artisan/actions/workflows/test.yml/badge.svg?event=push)
 
 ## Token auth for Laravel and Lumen web artisans
 
@@ -48,31 +48,29 @@ Add the appropriate service provider for Laravel/Lumen
 $app->register(GenTux\Jwt\Support\LumenServiceProvider::class);
 ```
 
-
 ## Configure
 
 All configuration for this package can be set using environment variables. The reason for using environment variables instead
 of config files is so that it can be integrated with both Laravel & Lumen as easily as possible. See the table below
 for the available config options and their defaults.
 
-| Config       | Default | Description                                                      |
-| ------------ | ------- | ---------------------------------------------------------------- |
-| `JWT_SECRET` | *null*  | The secret key that will be used for sigining/validating tokens. |
-| `JWT_ALGO`   | *HS256* | The algorithm to use for sigining tokens.                        |
-| `JWT_LEEWAY` | *0*     | Seconds of leeway for validating timestamps to account for time differences between systems |
-| `JWT_INPUT`  | *token* | By default we will look for the token in the `Authorization` header. If it's not found there, then this value will be used to search the sent input from the request to find the token. |
-| `JWT_HEADER`  | *Authorization* | By default the `Authorization` header key is used. This can be overridden with this value. |
+| Config       | Default         | Description                                                                                                                                                                             |
+| ------------ | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `JWT_SECRET` | _null_          | The secret key that will be used for sigining/validating tokens.                                                                                                                        |
+| `JWT_ALGO`   | _HS256_         | The algorithm to use for sigining tokens.                                                                                                                                               |
+| `JWT_LEEWAY` | _0_             | Seconds of leeway for validating timestamps to account for time differences between systems                                                                                             |
+| `JWT_INPUT`  | _token_         | By default we will look for the token in the `Authorization` header. If it's not found there, then this value will be used to search the sent input from the request to find the token. |
+| `JWT_HEADER` | _Authorization_ | By default the `Authorization` header key is used. This can be overridden with this value.                                                                                              |
 
 If you're using the `JwtExceptionHandler` to handle exceptions, these environment variables can be set to customize the error messages.
-*(see below for information on using the exception handler)*
+_(see below for information on using the exception handler)_
 
-| Config                   | Default                                                         | Description                                                        |
-| ------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `JWT_MESSAGE_ERROR`      | *There was an error while validating the authorization token.*  | `500` A general error occured while working with the token.        |
-| `JWT_MESSAGE_INVALID`    | *Authorization token is not valid.*                             | `401` The provided token is invalid in some way: expired, mismatched signature, etc. |
-| `JWT_MESSAGE_NOTOKEN`    | *Authorization token is required.*                              | `401` There was no token found with the request.                   |
-| `JWT_MESSAGE_NOSECRET`   | *No JWT secret defined.*                                        | `500` Unable to find the JWT secret for validating/signing tokens. |
-
+| Config                 | Default                                                        | Description                                                                          |
+| ---------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `JWT_MESSAGE_ERROR`    | _There was an error while validating the authorization token._ | `500` A general error occured while working with the token.                          |
+| `JWT_MESSAGE_INVALID`  | _Authorization token is not valid._                            | `401` The provided token is invalid in some way: expired, mismatched signature, etc. |
+| `JWT_MESSAGE_NOTOKEN`  | _Authorization token is required._                             | `401` There was no token found with the request.                                     |
+| `JWT_MESSAGE_NOSECRET` | _No JWT secret defined._                                       | `500` Unable to find the JWT secret for validating/signing tokens.                   |
 
 ## Working with Tokens
 
@@ -92,13 +90,13 @@ use GenTux\Jwt\JwtToken;
 
 class TokensController extends controller
 {
-    public function create(JwtToken $jwt)
-    {
-        $payload = ['exp' => time() + 7200]; // expire in 2 hours
-        $token = $jwt->createToken($payload); // new instance of JwtToken
+        public function create(JwtToken $jwt)
+        {
+                $payload = ["exp" => time() + 7200]; // expire in 2 hours
+                $token = $jwt->createToken($payload); // new instance of JwtToken
 
-        return (string) $token;
-    }
+                return (string) $token;
+        }
 }
 ```
 
@@ -111,16 +109,16 @@ use GenTux\Jwt\JwtPayloadInterface;
 
 class User extends Model implements JwtPayloadInterface
 {
-    public function getPayload()
-    {
-        return [
-            'sub' => $this->id,
-            'exp' => time() + 7200,
-            'context' => [
-                'email' => $this->email
-            ]
-        ];
-    }
+        public function getPayload()
+        {
+                return [
+                        "sub" => $this->id,
+                        "exp" => time() + 7200,
+                        "context" => [
+                                "email" => $this->email,
+                        ],
+                ];
+        }
 }
 ```
 
@@ -133,13 +131,13 @@ use GenTux\Jwt\JwtToken;
 
 class TokensController extends controller
 {
-    public function create(JwtToken $jwt)
-    {
-        $user = User::find(1);
-        $token = $jwt->createToken($user);
+        public function create(JwtToken $jwt)
+        {
+                $user = User::find(1);
+                $token = $jwt->createToken($user);
 
-        return $token->payload(); // ['sub' => 1, exp => '...', 'context' => ...]
-    }
+                return $token->payload(); // ['sub' => 1, exp => '...', 'context' => ...]
+        }
 }
 ```
 
@@ -163,14 +161,17 @@ The easiest way to validate a request with a JWT token is to use the provided mi
 <?php
 
 // Laravel
-Route::group(['middleware' => 'jwt'], function() {
-    Route::post('/foo', 'FooController');
+Route::group(["middleware" => "jwt"], function () {
+        Route::post("/foo", "FooController");
 });
 
 // Lumen
-$app->group(['middleware' => 'jwt', 'namespace' => 'App\Http\Controllers'], function($app)  {
-    $app->post('/foo', 'FooController');
-});
+$app->group(
+        ["middleware" => "jwt", "namespace" => "App\Http\Controllers"],
+        function ($app) {
+                $app->post("/foo", "FooController");
+        }
+);
 ```
 
 When a token is invalid, `GenTux\Jwt\Exceptions\InvalidTokenException` will be thrown. If no token is provided,
@@ -187,12 +188,12 @@ use GenTux\Jwt\GetsJwtToken;
 
 class CreateUser extends FormRequest
 {
-    use GetsJwtToken;
+        use GetsJwtToken;
 
-    public function authorize()
-    {
-        return $this->jwtToken()->validate();
-    }
+        public function authorize()
+        {
+                return $this->jwtToken()->validate();
+        }
 }
 ```
 
@@ -229,15 +230,14 @@ use GenTux\Jwt\GetsJwtToken;
 
 class TokenService
 {
+        use GetsJwtToken;
 
-    use GetsJwtToken;
+        public function getExpires()
+        {
+                $payload = $this->jwtPayload(); // shortcut for $this->jwtToken()->payload()
 
-    public function getExpires()
-    {
-        $payload = $this->jwtPayload(); // shortcut for $this->jwtToken()->payload()
-
-        return $payload['exp'];
-    }
+                return $payload["exp"];
+        }
 }
 ```
 
@@ -250,17 +250,17 @@ use GenTux\Jwt\GetsJwtToken;
 
 class TokenService
 {
-    use GetsJwtToken;
+        use GetsJwtToken;
 
-    public function getData()
-    {
-        // ['exp' => '123', 'context' => ['foo' => 'bar']]
+        public function getData()
+        {
+                // ['exp' => '123', 'context' => ['foo' => 'bar']]
 
-        $token = $this->jwtToken();
-        $token->payload('exp'); // 123
-        $token->payload('context.foo'); // bar
-        $token->payload('context.baz'); // null
-    }
+                $token = $this->jwtToken();
+                $token->payload("exp"); // 123
+                $token->payload("context.foo"); // bar
+                $token->payload("context.baz"); // null
+        }
 }
 ```
 
