@@ -1,0 +1,15 @@
+name: test
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: php-actions/composer@master # or alternative dependency management
+    - name: phpspec
+      uses: php-actions/phpspec@master
+      with:
+        config: phpspec.yml # or wherever your config file is
