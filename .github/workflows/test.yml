@@ -4,12 +4,28 @@ on: [push]
 
 jobs:
   build:
-    runs-on: php:7.3-cli
+    name: PHP ${{ matrix.php }}
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ 7.1, 7.2, 7.3 ]
+        os: [ ubuntu-latest ]
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: php-actions/composer@master # or alternative dependency management
-    - name: phpspec
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@master
+      with:
+        php-version: ${{ matrix.php }}
+
+    - uses: php-actions/composer@master
+
+    - name: PHP spec
       uses: php-actions/phpspec@master
       with:
-        config: phpspec.yml # or wherever your config file is
+        config: phpspec.yml
