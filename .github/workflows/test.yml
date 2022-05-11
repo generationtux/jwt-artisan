@@ -1,8 +1,6 @@
 name: test
 
-on:
-  pull_request:
-    types: [opened, reopened, review_requested]
+on: [push]
 
 jobs:
   build:
