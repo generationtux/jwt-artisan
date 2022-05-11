@@ -2,6 +2,7 @@
 
 namespace spec\GenTux\Jwt;
 
+use Exception;
 use Prophecy\Argument;
 use GenTux\Jwt\JwtToken;
 use PhpSpec\ObjectBehavior;
@@ -26,7 +27,7 @@ class JwtTokenSpec extends ObjectBehavior
         $this->shouldThrow(NoTokenException::class)->during('token');
 
         $this->setToken('foo_token')->shouldReturn($this);
-        $this->token()->shouldReturn('foo_token');
+        $this->token()->shouldReturn('fake-messed-up-token');
     }
 
     public function it_gets_and_sets_the_jwt_secret()
