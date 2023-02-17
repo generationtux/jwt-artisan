@@ -19,7 +19,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "firebase/php-jwt": "5.2.0",
+        "firebase/php-jwt": "6.0.0",
         "illuminate/http": "^6.0|^7.0|^8.0",
         "illuminate/support": "^6.0|^7.0|^8.0"
     },
