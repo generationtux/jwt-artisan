@@ -26,6 +26,7 @@ jobs:
       - name: Install Dependencies
         uses: php-actions/composer@master
         with:
+          version: latest
           php_version: ${{ matrix.php }}
 
       - name: PHP spec
