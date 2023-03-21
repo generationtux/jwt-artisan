@@ -45,7 +45,7 @@ class JwtToken implements JsonSerializable
      */
     public function token()
     {
-        if( ! $this->token) {
+        if (!$this->token) {
             throw new NoTokenException('No token has been set.');
         }
 
@@ -77,7 +77,7 @@ class JwtToken implements JsonSerializable
     {
         $secret = $this->secret ?: getenv('JWT_SECRET');
 
-        if(! $secret) {
+        if (!$secret) {
             throw new NoSecretException('Unable to find secret. Set using env variable JWT_SECRET');
         }
 
@@ -155,7 +155,7 @@ class JwtToken implements JsonSerializable
      */
     public function validateOrFail($secret = null, $algo = null)
     {
-        if( ! $this->validate($secret, $algo)) {
+        if (!$this->validate($secret, $algo)) {
             throw new InvalidTokenException('Token is not valid.');
         }
 
@@ -192,14 +192,14 @@ class JwtToken implements JsonSerializable
      */
     private function queryPayload($payload, $path = null)
     {
-        if(is_null($path)) return $payload;
+        if (is_null($path)) return $payload;
 
-        if(array_key_exists($path, $payload)) {
+        if (array_key_exists($path, $payload)) {
             return $payload[$path];
         }
 
         $dotData = Arr::dot($payload);
-        if(array_key_exists($path, $dotData)) {
+        if (array_key_exists($path, $dotData)) {
             return $dotData[$path];
         }
 
@@ -225,7 +225,7 @@ class JwtToken implements JsonSerializable
         $algo = $algo ?: $this->algorithm();
         $secret = $secret ?: $this->secret();
 
-        if($payload instanceof JwtPayloadInterface) {
+        if ($payload instanceof JwtPayloadInterface) {
             $payload = $payload->getPayload();
         }
 
@@ -245,6 +245,7 @@ class JwtToken implements JsonSerializable
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->token();
