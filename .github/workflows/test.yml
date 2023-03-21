@@ -29,7 +29,5 @@ jobs:
           version: latest
           php_version: ${{ matrix.php }}
 
-      - name: PHP spec
-        uses: php-actions/phpspec@master
-        with:
-          config: phpspec.yml
+      - name: Run PHP Spec
+        run: ./vendor/bin/phpspec run -c phpspec.yml
