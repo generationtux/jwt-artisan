@@ -1,34 +1,39 @@
 {
-    "name": "generationtux/jwt-artisan",
-    "description": "JWT auth package for Laravel and Lumen",
-    "keywords": ["jwt", "auth", "laravel", "lumen"],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Kyle Ferguson",
-            "email": "kylegferg@gmail.com"
-        },
-        {
-          "name": "Damien Russell",
-          "email": "christopher.russell@generationtux.com"
-        },
-        {
-          "name": "Thomas Manley",
-          "email": "thomas.manley@generationtux.com"
-        }
-    ],
-    "minimum-stability": "stable",
-    "require": {
-        "firebase/php-jwt": "5.2.0",
-        "illuminate/http": "^6.0|^7.0|^8.0",
-        "illuminate/support": "^6.0|^7.0|^8.0"
+  "name": "generationtux/jwt-artisan",
+  "description": "JWT auth package for Laravel and Lumen",
+  "keywords": [
+    "jwt",
+    "auth",
+    "laravel",
+    "lumen"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Kyle Ferguson",
+      "email": "kylegferg@gmail.com"
     },
-    "require-dev": {
-        "phpspec/phpspec": "6.2.0"
+    {
+      "name": "Damien Russell",
+      "email": "christopher.russell@generationtux.com"
     },
-    "autoload": {
-        "psr-4": {
-            "GenTux\\Jwt\\": "src/"
-        }
+    {
+      "name": "Thomas Manley",
+      "email": "thomas.manley@generationtux.com"
     }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "firebase/php-jwt": "5.2.0",
+    "illuminate/http": "^6.0|^7.0|^8.0|^9.0",
+    "illuminate/support": "^6.0|^7.0|^8.0|^9.0"
+  },
+  "require-dev": {
+    "phpspec/phpspec": "7.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "GenTux\\Jwt\\": "src/"
+    }
+  }
 }
