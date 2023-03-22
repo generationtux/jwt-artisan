@@ -27,8 +27,8 @@ trait GetsJwtToken
     {
         $request = $request ?: $this->makeRequest();
 
-        list($token) = sscanf($request->header($this->getAuthHeaderKey()), 'Bearer %s');
-        if( ! $token) {
+        list($token) = sscanf($request->header($this->getAuthHeaderKey()) ?? "", 'Bearer %s');
+        if (!$token) {
             $name = $this->getInputName();
             $token = $request->input($name);
         }
@@ -48,7 +48,7 @@ trait GetsJwtToken
     public function jwtToken($request = null)
     {
         $token = $this->getToken($request);
-        if( ! $token) throw new NoTokenException('JWT token is required.');
+        if (!$token) throw new NoTokenException('JWT token is required.');
 
         $driver = $this->makeDriver();
         $jwt = new JwtToken($driver);
@@ -115,7 +115,7 @@ trait GetsJwtToken
      */
     private function makeRequest()
     {
-        if($this instanceof Request) return $this;
+        if ($this instanceof Request) return $this;
 
         return app()->make(Request::class);
     }
