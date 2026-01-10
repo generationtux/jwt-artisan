@@ -24,7 +24,7 @@ class FirebaseDriverSpec extends ObjectBehavior
         $driver = new FirebaseDriver();
         $result = $driver->createToken($payload, $secret);
 
-        $expect = JWT::encode($payload, $secret);
+        $expect = JWT::encode($payload, $secret, 'HS256');
         if($result !== $expect) {
             throw new Exception('Expected '.$expect.' to match '.$result);
         }
@@ -36,7 +36,7 @@ class FirebaseDriverSpec extends ObjectBehavior
             'exp' => time() + 30,
             'iat' => time(),
             'nbf' => time(),
-        ], $secret = 'secret_123');
+        ], $secret = 'secret_123', 'HS256');
 
         $driver = new FirebaseDriver();
         $result = $driver->validateToken($token, $secret);
@@ -52,7 +52,7 @@ class FirebaseDriverSpec extends ObjectBehavior
             'iat' => time(),
             'nbf' => time(),
             'context' => ['foo' => 'bar'],
-        ], $secret = 'secret_123');
+        ], $secret = 'secret_123', 'HS256');
 
         $driver = new FirebaseDriver();
         $result = $driver->decodeToken($token, $secret);

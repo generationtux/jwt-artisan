@@ -11,23 +11,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.1]
+        php: ['8.2', '8.3', '8.4']
         os: [ubuntu-latest]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@master
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
 
       - name: Install Dependencies
-        uses: php-actions/composer@master
-        with:
-          version: latest
-          php_version: ${{ matrix.php }}
+        run: composer install --prefer-dist --no-progress
 
       - name: Run PHP Spec
         run: ./vendor/bin/phpspec run -c phpspec.yml

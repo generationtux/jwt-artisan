@@ -1,4 +1,4 @@
-FROM php:8.1-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # The following labels need to be set as part of the docker build process.
 #   org.opencontainers.image.created
@@ -15,9 +15,9 @@ USER root
 
 COPY ./docker/installComposer.sh /tmp/installComposer.sh
 
-RUN apk --no-cache --update add bash ca-certificates libpq postgresql-dev curl git curl git mysql-client unzip wget zip postgresql-client \
+RUN apk --no-cache --update add bash ca-certificates libpq postgresql-dev curl git curl git mysql-client unzip wget zip postgresql-client linux-headers \
     && apk add --no-cache --virtual build-dependencies autoconf build-base g++ make \
-    && pecl install redis xdebug-3.1.4 \
+    && pecl install redis xdebug \
     && docker-php-ext-install bcmath opcache pdo_mysql pdo_pgsql pcntl \
     && docker-php-ext-enable bcmath opcache redis xdebug \
     && chmod +x /tmp/installComposer.sh \
