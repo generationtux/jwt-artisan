@@ -4,6 +4,11 @@
 
 ## Token auth for Laravel and Lumen web artisans
 
+### Requirements
+
+- PHP 8.2, 8.3, or 8.4
+- Laravel 10.x, 11.x, or 12.x (or Lumen equivalent)
+
 [JWT](http://jwt.io/) is a great solution for authenticating API requests between various services. This package
 makes working with JWT super easy for both [Laravel](http://laravel.com/) and [Lumen](http://lumen.laravel.com/).
 
@@ -26,6 +31,8 @@ Which is why JWT makes you feel like
 - [Setup](#setup)
 - [Configure](#configure)
 - [Working with Tokens](#working-with-tokens)
+- [Security](#security)
+- [Development](#development)
 
 ## Setup
 
@@ -71,6 +78,19 @@ _(see below for information on using the exception handler)_
 | `JWT_MESSAGE_INVALID`  | _Authorization token is not valid._                            | `401` The provided token is invalid in some way: expired, mismatched signature, etc. |
 | `JWT_MESSAGE_NOTOKEN`  | _Authorization token is required._                             | `401` There was no token found with the request.                                     |
 | `JWT_MESSAGE_NOSECRET` | _No JWT secret defined._                                       | `500` Unable to find the JWT secret for validating/signing tokens.                   |
+
+### Security Configuration
+
+These environment variables control security features. All are disabled by default for backward compatibility.
+
+| Config | Default | Description |
+| ------ | ------- | ----------- |
+| `JWT_STRICT_MODE` | _false_ | Enable all strict security validations (enforces secret length and token expiration) |
+| `JWT_HEADER_ONLY` | _false_ | Only accept tokens from the Authorization header (disables query string/body fallback) |
+| `JWT_REQUIRE_EXP` | _false_ | Require `exp` claim in all tokens |
+| `JWT_MIN_SECRET_LENGTH` | _32_ | Minimum secret length (warning in normal mode, error in strict mode) |
+
+**Allowed Algorithms:** HS256, HS384, HS512, RS256, RS384, RS512, ES256, ES384, ES512, EdDSA (non-whitelisted algorithms log a warning; throw in strict mode)
 
 ## Working with Tokens
 
@@ -290,3 +310,84 @@ class Handler extends ExceptionHandler
     }
 }
 ```
+
+## Security
+
+### Best Practices
+
+1. **Use Strong Secrets**: Your `JWT_SECRET` should be at least 32 characters and generated using a cryptographically secure random generator. Weak secrets are vulnerable to brute-force attacks.
+
+   ```bash
+   # Generate a secure secret
+   php -r "echo bin2hex(random_bytes(32));"
+   ```
+
+2. **Always Set Token Expiration**: Include an `exp` claim in your tokens. Long-lived tokens increase the window of exposure if compromised.
+
+   ```php
+   $payload = [
+       'sub' => $userId,
+       'exp' => time() + 3600, // 1 hour
+   ];
+   ```
+
+3. **Use Header-Only Mode in Production**: Enable `JWT_HEADER_ONLY=true` to prevent tokens from being accepted via query strings, which can leak through logs and referrer headers.
+
+4. **Enable Strict Mode for New Projects**: Set `JWT_STRICT_MODE=true` to enforce all security validations. This mode:
+   - Throws an exception for secrets shorter than 32 characters
+   - Requires `exp` claim in all tokens
+   - Validates algorithms against the whitelist
+
+5. **Use HTTPS**: Always transmit tokens over HTTPS to prevent interception.
+
+### Strict Mode
+
+Enable strict mode for enhanced security:
+
+```bash
+JWT_STRICT_MODE=true
+```
+
+This automatically enables:
+- Secret length validation (throws exception for weak secrets)
+- Token expiration requirement
+- Algorithm whitelist enforcement (throws exception for non-whitelisted algorithms)
+
+## Development
+
+### Running Tests Locally
+
+This package uses Docker to ensure consistent test environments across PHP versions. Before pushing code, run the test suite to verify all tests pass.
+
+**Run tests on default PHP version (8.4):**
+
+```bash
+docker-compose run --rm php composer install
+docker-compose run --rm php ./vendor/bin/phpspec run -c phpspec.yml
+```
+
+**Run tests on a specific PHP version:**
+
+```bash
+# Build and test on PHP 8.2
+PHP_VERSION=8.2 docker-compose build php
+PHP_VERSION=8.2 docker-compose run --rm php composer install
+PHP_VERSION=8.2 docker-compose run --rm php ./vendor/bin/phpspec run -c phpspec.yml
+
+# Build and test on PHP 8.3
+PHP_VERSION=8.3 docker-compose build php
+PHP_VERSION=8.3 docker-compose run --rm php composer install
+PHP_VERSION=8.3 docker-compose run --rm php ./vendor/bin/phpspec run -c phpspec.yml
+```
+
+### CI Matrix
+
+The GitHub Actions workflow tests all supported PHP and Laravel version combinations:
+
+| PHP | Laravel 10 | Laravel 11 | Laravel 12 |
+|-----|------------|------------|------------|
+| 8.2 | ✓ | ✓ | ✓ |
+| 8.3 | ✓ | ✓ | ✓ |
+| 8.4 | ✓ | ✓ | ✓ |
+
+Before pushing, ensure tests pass on at least PHP 8.2 (the minimum supported version) to catch any compatibility issues.

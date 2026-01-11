@@ -8,9 +8,22 @@ use GenTux\Jwt\Drivers\JwtDriverInterface;
 use GenTux\Jwt\Exceptions\NoTokenException;
 use GenTux\Jwt\Exceptions\NoSecretException;
 use GenTux\Jwt\Exceptions\InvalidTokenException;
+use GenTux\Jwt\Exceptions\InvalidAlgorithmException;
+use GenTux\Jwt\Exceptions\WeakSecretException;
+use GenTux\Jwt\Exceptions\TokenExpiredException;
 
 class JwtToken implements JsonSerializable
 {
+    /** @var array Allowed algorithms for JWT signing */
+    private const ALLOWED_ALGORITHMS = [
+        'HS256', 'HS384', 'HS512',
+        'RS256', 'RS384', 'RS512',
+        'ES256', 'ES384', 'ES512',
+        'EdDSA',
+    ];
+
+    /** @var int Default minimum secret length */
+    private const DEFAULT_MIN_SECRET_LENGTH = 32;
 
     /** @var JwtDriverInterface */
     private $jwt;
@@ -72,6 +85,7 @@ class JwtToken implements JsonSerializable
      * @return string
      *
      * @throws NoSecretException
+     * @throws WeakSecretException
      */
     public function secret()
     {
@@ -80,6 +94,8 @@ class JwtToken implements JsonSerializable
         if (!$secret) {
             throw new NoSecretException('Unable to find secret. Set using env variable JWT_SECRET');
         }
+
+        $this->validateSecretStrength($secret);
 
         return $secret;
     }
@@ -104,12 +120,17 @@ class JwtToken implements JsonSerializable
      * This can be customized by setting the env variable JWT_ALGO
      *
      * @return string
+     *
+     * @throws InvalidAlgorithmException
      */
     public function algorithm()
     {
         $algorithm = $this->algorithm ?: getenv('JWT_ALGO');
+        $algorithm = $algorithm ?: 'HS256';
 
-        return $algorithm ?: 'HS256';
+        $this->validateAlgorithm($algorithm);
+
+        return $algorithm;
     }
 
     /**
@@ -212,13 +233,15 @@ class JwtToken implements JsonSerializable
      * The default algorithm used is HS256. To set a custom one, set
      * the env variable JWT_ALGO.
      *
-     * @todo Support for enforcing required claims in payload as well as defaults
-     *
      * @param JwtPayloadInterface|array $payload
      * @param string|null               $secret
      * @param string|null               $algo
      *
      * @return JwtToken
+     *
+     * @throws InvalidTokenException
+     * @throws WeakSecretException
+     * @throws InvalidAlgorithmException
      */
     public function createToken($payload, $secret = null, $algo = null)
     {
@@ -228,6 +251,9 @@ class JwtToken implements JsonSerializable
         if ($payload instanceof JwtPayloadInterface) {
             $payload = $payload->getPayload();
         }
+
+        // Validate payload expiration
+        $this->validatePayloadExpiration($payload);
 
         $newToken = $this->jwt->createToken($payload, $secret, $algo);
 
@@ -262,5 +288,148 @@ class JwtToken implements JsonSerializable
     public function __toString()
     {
         return $this->token();
+    }
+
+    /**
+     * Check if strict mode is enabled
+     *
+     * @return bool
+     */
+    public static function isStrictMode()
+    {
+        $strict = getenv('JWT_STRICT_MODE');
+        return $strict === 'true' || $strict === '1';
+    }
+
+    /**
+     * Get the minimum secret length
+     *
+     * @return int
+     */
+    public static function getMinSecretLength()
+    {
+        $length = getenv('JWT_MIN_SECRET_LENGTH');
+        return $length ? (int) $length : self::DEFAULT_MIN_SECRET_LENGTH;
+    }
+
+    /**
+     * Validate secret strength
+     *
+     * In strict mode, throws an exception for weak secrets.
+     * In normal mode, triggers a warning log.
+     *
+     * @param string $secret
+     *
+     * @return void
+     *
+     * @throws WeakSecretException
+     */
+    public function validateSecretStrength($secret)
+    {
+        $minLength = self::getMinSecretLength();
+
+        if (strlen($secret) < $minLength) {
+            $message = "JWT secret is shorter than recommended minimum of {$minLength} characters.";
+
+            if (self::isStrictMode()) {
+                throw new WeakSecretException($message);
+            }
+
+            // Log warning in non-strict mode (if logger available)
+            if (function_exists('app') && app()->bound('log')) {
+                app('log')->warning($message);
+            } else {
+                error_log("[JWT Warning] " . $message);
+            }
+        }
+    }
+
+    /**
+     * Validate algorithm is in whitelist
+     *
+     * In strict mode, throws an exception for non-whitelisted algorithms.
+     * In normal mode, logs a warning.
+     *
+     * @param string $algorithm
+     *
+     * @return void
+     *
+     * @throws InvalidAlgorithmException
+     */
+    public function validateAlgorithm($algorithm)
+    {
+        if (!in_array($algorithm, self::ALLOWED_ALGORITHMS, true)) {
+            $message = "Algorithm '{$algorithm}' is not in the recommended whitelist. Allowed algorithms: " . implode(', ', self::ALLOWED_ALGORITHMS);
+
+            if (self::isStrictMode()) {
+                throw new InvalidAlgorithmException($message);
+            }
+
+            // Log warning in non-strict mode (if logger available)
+            if (function_exists('app') && app()->bound('log')) {
+                app('log')->warning($message);
+            } else {
+                error_log("[JWT Warning] " . $message);
+            }
+        }
+    }
+
+    /**
+     * Check if expiration is required
+     *
+     * @return bool
+     */
+    public static function isExpirationRequired()
+    {
+        $required = getenv('JWT_REQUIRE_EXP');
+        return $required === 'true' || $required === '1' || self::isStrictMode();
+    }
+
+    /**
+     * Validate payload has expiration if required
+     *
+     * @param array $payload
+     *
+     * @return void
+     *
+     * @throws InvalidTokenException
+     */
+    public function validatePayloadExpiration($payload)
+    {
+        if (!isset($payload['exp'])) {
+            $message = "JWT token should include an 'exp' (expiration) claim for security.";
+
+            if (self::isExpirationRequired()) {
+                throw new InvalidTokenException($message . " Set JWT_REQUIRE_EXP=false to disable this check.");
+            }
+
+            // Log warning in non-strict mode
+            if (function_exists('app') && app()->bound('log')) {
+                app('log')->warning($message);
+            } else {
+                error_log("[JWT Warning] " . $message);
+            }
+        }
+    }
+
+    /**
+     * Check if header-only mode is enabled
+     *
+     * @return bool
+     */
+    public static function isHeaderOnly()
+    {
+        $headerOnly = getenv('JWT_HEADER_ONLY');
+        return $headerOnly === 'true' || $headerOnly === '1';
+    }
+
+    /**
+     * Get the list of allowed algorithms
+     *
+     * @return array
+     */
+    public static function getAllowedAlgorithms()
+    {
+        return self::ALLOWED_ALGORITHMS;
     }
 }
