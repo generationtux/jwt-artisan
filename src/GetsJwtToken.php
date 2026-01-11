@@ -17,7 +17,8 @@ trait GetsJwtToken
      * Get the JWT token from the request
      *
      * We'll check the Authorization header first, and if that's not set
-     * then check the input to see if its provided there instead.
+     * then check the input to see if its provided there instead (unless
+     * JWT_HEADER_ONLY is enabled).
      *
      * @param Request|null $request
      *
@@ -28,12 +29,28 @@ trait GetsJwtToken
         $request = $request ?: $this->makeRequest();
 
         list($token) = sscanf($request->header($this->getAuthHeaderKey()) ?? "", 'Bearer %s');
-        if (!$token) {
+
+        // Only fallback to input if header-only mode is disabled
+        if (!$token && !$this->isHeaderOnlyMode()) {
             $name = $this->getInputName();
             $token = $request->input($name);
         }
 
         return $token;
+    }
+
+    /**
+     * Check if header-only mode is enabled
+     *
+     * When enabled, tokens will only be accepted from the Authorization header,
+     * not from query string or request body.
+     *
+     * @return bool
+     */
+    private function isHeaderOnlyMode()
+    {
+        $headerOnly = getenv('JWT_HEADER_ONLY');
+        return $headerOnly === 'true' || $headerOnly === '1';
     }
 
     /**

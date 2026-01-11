@@ -38,6 +38,11 @@
       "GenTux\\Jwt\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "GenTux\\Jwt\\Tests\\": "tests/"
+    }
+  },
   "config": {
     "platform": {
       "php": "8.2"
