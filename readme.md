@@ -90,7 +90,7 @@ These environment variables control security features. All are disabled by defau
 | `JWT_REQUIRE_EXP` | _false_ | Require `exp` claim in all tokens |
 | `JWT_MIN_SECRET_LENGTH` | _32_ | Minimum secret length (warning in normal mode, error in strict mode) |
 
-**Allowed Algorithms:** HS256, HS384, HS512, RS256, RS384, RS512, ES256, ES384, ES512, EdDSA
+**Allowed Algorithms:** HS256, HS384, HS512, RS256, RS384, RS512, ES256, ES384, ES512, EdDSA (non-whitelisted algorithms log a warning; throw in strict mode)
 
 ## Working with Tokens
 
@@ -351,7 +351,7 @@ JWT_STRICT_MODE=true
 This automatically enables:
 - Secret length validation (throws exception for weak secrets)
 - Token expiration requirement
-- Algorithm whitelist enforcement
+- Algorithm whitelist enforcement (throws exception for non-whitelisted algorithms)
 
 ## Development
 

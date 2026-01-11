@@ -70,11 +70,22 @@ class JwtTokenSpec extends ObjectBehavior
         putenv('JWT_ALGO=');
     }
 
-    public function it_throws_exception_for_invalid_algorithm()
+    public function it_warns_for_invalid_algorithm_in_normal_mode()
+    {
+        putenv('JWT_ALGO=custom_algo');
+        putenv('JWT_STRICT_MODE=false');
+        // In normal mode, should return the algorithm but log a warning
+        $this->algorithm()->shouldReturn('custom_algo');
+        putenv('JWT_ALGO=');
+    }
+
+    public function it_throws_exception_for_invalid_algorithm_in_strict_mode()
     {
         putenv('JWT_ALGO=invalid_algo');
+        putenv('JWT_STRICT_MODE=true');
         $this->shouldThrow(InvalidAlgorithmException::class)->during('algorithm');
         putenv('JWT_ALGO=');
+        putenv('JWT_STRICT_MODE=');
     }
 
     public function it_returns_true_on_validation_if_the_token_is_valid(JwtDriverInterface $jwt)

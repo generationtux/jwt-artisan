@@ -347,6 +347,9 @@ class JwtToken implements JsonSerializable
     /**
      * Validate algorithm is in whitelist
      *
+     * In strict mode, throws an exception for non-whitelisted algorithms.
+     * In normal mode, logs a warning.
+     *
      * @param string $algorithm
      *
      * @return void
@@ -356,9 +359,18 @@ class JwtToken implements JsonSerializable
     public function validateAlgorithm($algorithm)
     {
         if (!in_array($algorithm, self::ALLOWED_ALGORITHMS, true)) {
-            throw new InvalidAlgorithmException(
-                "Algorithm '{$algorithm}' is not allowed. Allowed algorithms: " . implode(', ', self::ALLOWED_ALGORITHMS)
-            );
+            $message = "Algorithm '{$algorithm}' is not in the recommended whitelist. Allowed algorithms: " . implode(', ', self::ALLOWED_ALGORITHMS);
+
+            if (self::isStrictMode()) {
+                throw new InvalidAlgorithmException($message);
+            }
+
+            // Log warning in non-strict mode (if logger available)
+            if (function_exists('app') && app()->bound('log')) {
+                app('log')->warning($message);
+            } else {
+                error_log("[JWT Warning] " . $message);
+            }
         }
     }
 
