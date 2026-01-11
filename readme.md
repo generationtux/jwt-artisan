@@ -4,6 +4,11 @@
 
 ## Token auth for Laravel and Lumen web artisans
 
+### Requirements
+
+- PHP 8.2, 8.3, or 8.4
+- Laravel 10.x, 11.x, or 12.x (or Lumen equivalent)
+
 [JWT](http://jwt.io/) is a great solution for authenticating API requests between various services. This package
 makes working with JWT super easy for both [Laravel](http://laravel.com/) and [Lumen](http://lumen.laravel.com/).
 
@@ -26,6 +31,7 @@ Which is why JWT makes you feel like
 - [Setup](#setup)
 - [Configure](#configure)
 - [Working with Tokens](#working-with-tokens)
+- [Development](#development)
 
 ## Setup
 
@@ -290,3 +296,42 @@ class Handler extends ExceptionHandler
     }
 }
 ```
+
+## Development
+
+### Running Tests Locally
+
+This package uses Docker to ensure consistent test environments across PHP versions. Before pushing code, run the test suite to verify all tests pass.
+
+**Run tests on default PHP version (8.4):**
+
+```bash
+docker-compose run --rm php composer install
+docker-compose run --rm php ./vendor/bin/phpspec run -c phpspec.yml
+```
+
+**Run tests on a specific PHP version:**
+
+```bash
+# Build and test on PHP 8.2
+PHP_VERSION=8.2 docker-compose build php
+PHP_VERSION=8.2 docker-compose run --rm php composer install
+PHP_VERSION=8.2 docker-compose run --rm php ./vendor/bin/phpspec run -c phpspec.yml
+
+# Build and test on PHP 8.3
+PHP_VERSION=8.3 docker-compose build php
+PHP_VERSION=8.3 docker-compose run --rm php composer install
+PHP_VERSION=8.3 docker-compose run --rm php ./vendor/bin/phpspec run -c phpspec.yml
+```
+
+### CI Matrix
+
+The GitHub Actions workflow tests all supported PHP and Laravel version combinations:
+
+| PHP | Laravel 10 | Laravel 11 | Laravel 12 |
+|-----|------------|------------|------------|
+| 8.2 | ✓ | ✓ | ✓ |
+| 8.3 | ✓ | ✓ | ✓ |
+| 8.4 | ✓ | ✓ | ✓ |
+
+Before pushing, ensure tests pass on at least PHP 8.2 (the minimum supported version) to catch any compatibility issues.
