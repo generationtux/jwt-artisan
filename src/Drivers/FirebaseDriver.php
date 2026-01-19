@@ -3,6 +3,7 @@
 namespace GenTux\Jwt\Drivers;
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class FirebaseDriver implements JwtDriverInterface
 {
@@ -28,7 +29,7 @@ class FirebaseDriver implements JwtDriverInterface
     public function validateToken($token, $secret, $algorithm = 'HS256')
     {
         try {
-            JWT::decode($token, $secret, [$algorithm]);
+            JWT::decode($token, new Key($secret, $algorithm));
         } catch(\Exception $e) {
             return false;
         }
@@ -61,7 +62,7 @@ class FirebaseDriver implements JwtDriverInterface
      */
     public function decodeToken($token, $secret, $algorithm = 'HS256')
     {
-        $decoded = JWT::decode($token, $secret, [$algorithm]);
+        $decoded = JWT::decode($token, new Key($secret, $algorithm));
 
         return $this->convertObjectToArray($decoded);
     }
