@@ -1,51 +1,51 @@
 {
-  "name": "generationtux/jwt-artisan",
-  "description": "JWT auth package for Laravel and Lumen",
-  "keywords": [
-    "jwt",
-    "auth",
-    "laravel",
-    "lumen"
-  ],
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Kyle Ferguson",
-      "email": "kylegferg@gmail.com"
+    "name": "generationtux/jwt-artisan",
+    "description": "JWT auth package for Laravel and Lumen",
+    "keywords": [
+        "jwt",
+        "auth",
+        "laravel",
+        "lumen"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kyle Ferguson",
+            "email": "kylegferg@gmail.com"
+        },
+        {
+            "name": "Damien Russell",
+            "email": "christopher.russell@generationtux.com"
+        },
+        {
+            "name": "Thomas Manley",
+            "email": "thomas.manley@generationtux.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.2",
+        "firebase/php-jwt": "^6.0|^7.0",
+        "illuminate/http": "^10.0|^11.0|^12.0|^13.0",
+        "illuminate/support": "^10.0|^11.0|^12.0|^13.0"
     },
-    {
-      "name": "Damien Russell",
-      "email": "christopher.russell@generationtux.com"
+    "require-dev": {
+        "phpspec/phpspec": "^8.0",
+        "symfony/console": "^7.0"
     },
-    {
-      "name": "Thomas Manley",
-      "email": "thomas.manley@generationtux.com"
+    "autoload": {
+        "psr-4": {
+            "GenTux\\Jwt\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "GenTux\\Jwt\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.2"
+        }
     }
-  ],
-  "minimum-stability": "stable",
-  "require": {
-    "php": "^8.2",
-    "firebase/php-jwt": "^6.0",
-    "illuminate/http": "^10.0|^11.0|^12.0",
-    "illuminate/support": "^10.0|^11.0|^12.0"
-  },
-  "require-dev": {
-    "phpspec/phpspec": "^8.0",
-    "symfony/console": "^7.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "GenTux\\Jwt\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "GenTux\\Jwt\\Tests\\": "tests/"
-    }
-  },
-  "config": {
-    "platform": {
-      "php": "8.2"
-    }
-  }
 }
